@@ -135,15 +135,15 @@ extension ListViewController: UITableViewDelegate {
             }
             groceryItem.sortOrder = newRow
             
-            if currentRow != newRow {
+            if currentRow > newRow {
                 self.tableView.performBatchUpdates({
                     let newIndexPath = IndexPath(row: newRow, section: 0)
-                    let oldItem = groceryItems[newRow]
-                    groceryItems[indexPath.row] = oldItem
-                    groceryItems[newRow] = groceryItem
+                    groceryItems.remove(at: currentRow)
+                    groceryItems.insert(groceryItem, at: newRow)
                     self.tableView.moveRow(at: indexPath, to: newIndexPath)
-                    self.updateItemsLabel()
-                }, completion: nil)
+                }, completion: { (_) in
+                    self.tableView.reloadData()
+                })
             } else {
                 groceryItems[currentRow] = groceryItem
                 self.tableView.reloadData()
@@ -151,62 +151,31 @@ extension ListViewController: UITableViewDelegate {
             
         }
         else {
-//            groceryItem.sortOrder = -1
-//            groceryItems[currentRow] = groceryItem
-//            if currentRow == newRow - 1 {
-//                // The last checked item was unchecked. Row should remain in the same position
-//                newRow = currentRow
-//            }
-//            if newRow >= groceryItems.count {
-//                // Move the item to the last position
-//                newRow = groceryItems.count - 1
-//            }
-        }
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        groceryItem.isChecked = !groceryItem.isChecked
-        var newRow = checkedItemsCount
-        if checkedItemsCount >= groceryItems.count {
-            newRow -= 1
-        }
-        var accessoryType = UITableViewCellAccessoryType.checkmark
-        
-        if groceryItem.isChecked {
-            groceryItem.sortOrder = newRow
-        }
-        else {
+            
             groceryItem.sortOrder = -1
-            accessoryType = .none
-            if indexPath.row == checkedItemsCount - 1 {
-                newRow = indexPath.row
+            newRow = checkedItemsCount - 1
+            
+            if currentRow == newRow {
+                self.groceryItems[currentRow] = groceryItem
+                self.tableView.reloadData()
+            }
+            else {
+                self.tableView.performBatchUpdates({
+                    let newIndexPath = IndexPath(row: newRow, section: 0)
+                    self.tableView.moveRow(at: indexPath, to: newIndexPath)
+                    groceryItems.remove(at: currentRow)
+                    groceryItems.insert(groceryItem, at: newRow)
+                }, completion: { (_) in
+                    self.tableView.reloadData()
+                })
             }
         }
         
-        cell.accessoryType = accessoryType
-        
-        tableView.performBatchUpdates({
-            let newIndexPath = IndexPath(row: newRow, section: 0)
-            let oldItem = groceryItems[newRow]
-            groceryItems[indexPath.row] = oldItem
-            groceryItems[newRow] = groceryItem
-            self.tableView.moveRow(at: indexPath, to: newIndexPath)
-            self.updateItemsLabel()
-        }, completion: nil)
+        self.updateItemsLabel()
         
     }
+        
+
     
 }
 
