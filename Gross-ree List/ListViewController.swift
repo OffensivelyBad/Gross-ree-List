@@ -16,10 +16,7 @@ class ListViewController: UIViewController {
     @IBOutlet weak var itemsLabel: UILabel!
     @IBOutlet weak var resetButton: UIButton!
     
-    private var groceryItems = [GroceryItem]()
-    private var checkedItemsCount: Int {
-        return groceryItems.reduce(0) { $0 + ($1.isChecked ? 1 : 0) }
-    }
+    private var groceryList = GroceryList<String>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,14 +32,16 @@ class ListViewController: UIViewController {
         //load test data
         let item1 = GroceryItem(name: "Cinnamon Toast Crunch", isChecked: false, sortOrder: 0, category: "Breakfast")
         let item2 = GroceryItem(name: "Ribeye Steak", isChecked: false, sortOrder: 0, category: "Meat")
-        groceryItems.append(contentsOf: [item1, item2])
+        groceryList.add(item1.category, item: item1)
+        groceryList.add(item2.category, item: item2)
         tableView.reloadData()
         
         updateItemsLabel()
     }
     
     private func updateItemsLabel() {
-        let totalCount = groceryItems.count
+        let totalCount = self.groceryList.totalCount
+        let checkedItemsCount = self.groceryList.checkedCount
         itemsLabel.text = "\(checkedItemsCount)/\(totalCount) Items"
     }
     
@@ -74,13 +73,7 @@ class ListViewController: UIViewController {
         let alert = UIAlertController(title: "Are you sure?", message: "Do you want to reset the shopping list and start over?", preferredStyle: .alert)
         let cancel = UIAlertAction(title: "No", style: .cancel, handler: nil)
         let reset = UIAlertAction(title: "Reset", style: .destructive) { (action) in
-            var newItems = [GroceryItem]()
-            for item in self.groceryItems {
-                var newItem = item
-                newItem.isChecked = false
-                newItems.append(newItem)
-            }
-            self.groceryItems = newItems
+            self.groceryList.reset()
             self.tableView.reloadData()
             self.updateItemsLabel()
         }
