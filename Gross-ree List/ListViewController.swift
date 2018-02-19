@@ -111,6 +111,7 @@ extension ListViewController: UITableViewDataSource {
 extension ListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.tableView.deselectRow(at: indexPath, animated: true)
         guard groceryList.contents.count > indexPath.section && groceryList.contents[indexPath.section].items.count > indexPath.row else { fatalError("Out of index: section: \(indexPath.section), row: \(indexPath.row). GroceryList: \(groceryList)") }
         
         let category = groceryList.contents[indexPath.section]
@@ -127,10 +128,14 @@ extension ListViewController: UITableViewDelegate {
         var currentItemIndex = 0
         var newItemIndex = 0
         
+        guard let cell = tableView.cellForRow(at: indexPath) else { return }
+        
         if item.isChecked {
+            cell.accessoryType = .none
             ((currentCategoryIndex: currentCategoryIndex, newCategoryIndex: newCategoryIndex), (currentItemIndex: currentItemIndex, newItemIndex: newItemIndex)) = groceryList.unCheck(item: item, in: category)
         }
         else {
+            cell.accessoryType = .checkmark
             ((currentCategoryIndex: currentCategoryIndex, newCategoryIndex: newCategoryIndex), (currentItemIndex: currentItemIndex, newItemIndex: newItemIndex)) = groceryList.checkOff(item: item, in: category)
         }
         
