@@ -13,7 +13,7 @@ enum Constants {
     static let ListSegueID = "listAddSegue"
 }
 
-enum GroceryCategory {
+enum Category {
     static let categories = [
         "Produce",
         "Meat",
@@ -29,129 +29,132 @@ enum GroceryCategory {
     ]
 }
 
-struct Category {
+struct GroceryCategory {
+    var name: String
+    var items: [GroceryItem]
+    var checkedCount: Int {
+        return items.filter { $0.isChecked }.count
+    }
     
+    mutating func add(item: GroceryItem) {
+        // Prevent duplicate items from being added
+        let existingItems = items.filter { $0.name.uppercased() == item.name.uppercased() }
+        if existingItems.count == 0 {
+            items.append(item)
+        }
+    }
+    
+    mutating func remove(item: GroceryItem) {
+        for (index, existingItem) in items.enumerated() {
+            if item.name == existingItem.name {
+                items.remove(at: index)
+                break
+            }
+        }
+    }
+    
+    mutating func checkOff(item: GroceryItem) {
+        for (index, existingItem) in items.enumerated() {
+            if item.name == existingItem.name {
+                var newItem = item
+                newItem.isChecked = true
+                items[index] = newItem
+                break
+            }
+        }
+    }
 }
 
 struct GroceryItem {
     var name: String
     var isChecked: Bool
-    var sortOrder: Int
-    var category: String
 }
 
-
-
-struct GroceryList<Element: Hashable> {
-    private var contents: [Element: [GroceryItem]] = [:]
-    var categoryCount: Int {
-        return contents.count
-    }
-    var checkedCount: Int {
+struct GroceryList {
+    var contents: [GroceryCategory] = []
+    var categoriesWithChecksCount: Int {
         var count = 0
         for content in contents {
-            count += content.value.reduce(0) { $0 + ($1.isChecked ? 1 : 0) }
+            count += content.checkedCount > 0 ? 1 : 0
         }
         return count
     }
-    var totalCount: Int {
-        var count = 0
-        for content in contents {
-            count += content.value.count
+
+    mutating func add(item: GroceryItem, to category: String) {
+        for (index, existingCategory) in contents.enumerated() {
+            if existingCategory.name == category {
+                // Add the new item to the existing category
+                var newCategory = existingCategory
+                newCategory.add(item: item)
+                contents[index] = newCategory
+                break
+            }
         }
-        return count
+        // The category needs to be added
+        let newCategory = GroceryCategory(name: category, items: [item])
+        contents.append(newCategory)
     }
     
-    init() { }
-    init<S: Sequence>(_ sequence: S) where S.Iterator.Element == (key: Element, value: [GroceryItem]) {
-        for (category, items) in sequence {
-            for item in items {
-                add(category, item: item)
+    mutating func remove(item: GroceryItem, from category: GroceryCategory) {
+        for (index, existingCategory) in contents.enumerated() {
+            if existingCategory.name == category.name {
+                if existingCategory.items.count > 1 {
+                    // Remove the item from the category
+                    var newCategory = existingCategory
+                    newCategory.remove(item: item)
+                    contents[index] = newCategory
+                }
+                else {
+                    // Remove the entire category
+                    contents.remove(at: index)
+                }
+                break
             }
         }
     }
     
-    private func checkItemExists(_ item: GroceryItem, in category: Element) -> Bool {
-        var exists = false
+    // These functions should return index values so the tableview can be rearranged in an animated fashion
+    mutating func checkOff(item: GroceryItem, in category: GroceryCategory) {
+        // If the item is the first in the category to be checked:
+            // If the category is the first on the list to have an item checked, move it to the first position in the contents array
+            // Otherwise move the category to the position after the last category that has an item checked
+            // Then move the item to the first position in the category
+        // Otherwise the category position should remain the same
+            // Move the item to the position after the last item that is checked in the category
         
-        // Get the category that the item should be in
-        guard let content = contents[category] else {
-            return exists
+        // Check the item off
+        if category.checkedCount == 0 {
+            if categoriesWithChecksCount == 0 {
+                // Move the category to the first position in the array
+                
+            }
+            else {
+                // Move the category to the categoriesWithCheckCount index
+            }
+            // Move the item to the first position
         }
-        
-        // Filter to the items that match the name
-        let items = content.filter { $0.name == item.name }
-        exists = items.count > 0
-        
-        return exists
+        else {
+            // Move the item to the checkedCount position in the category
+        }
     }
     
-    mutating func reset() {
-        var newList = GroceryList<Element>()
-        for (_, items) in contents {
-            for item in items {
-                var newItem = item
-                newItem.isChecked = false
-                guard let element = newItem.category as? Element else { continue }
-                newList.add(element, item: newItem)
+    mutating func unCheck(item: GroceryItem, in category: GroceryCategory) {
+        // If no other items in the category are checked:
+            // If the category is the only category on the list to have an item checked, keep the category positions the same
+            // Otherwise, move the category to the position after the last category that has an item checked
+            // The item should remain in the same position in the category
+        // Otherwise the category position should remain the same
+            // Move the item to the position after the last item that is checked in the category
+        
+        // Uncheck the item
+        if category.checkedCount == 0 {
+            if categoriesWithChecksCount > 0 {
+                // Move the category to the categoriesWithCheckCount - 1 index
             }
         }
-        contents = newList.contents
-    }
-    
-    mutating func add(_ category: Element, item: GroceryItem) {
-        if let _ = contents[category] {
-            // The category is already in the list. Add the item to the category
-            contents[category]?.append(item)
-        }
         else {
-            // The category is not in the list. Add the category and item
-            contents[category] = [item]
+            // Move the item to the checkedCount - 1 index
         }
     }
     
-    mutating func remove(_ category: Element, item: GroceryItem) {
-        guard checkItemExists(item, in: category), let contentCategory = contents[category] else { return }
-        
-        if contentCategory.count > 1 {
-            // Remove the item from the category
-            let newContent = contentCategory.filter { $0.name != item.name }
-            contents[category] = newContent
-        }
-        else {
-            // Remove the entire category
-            contents.removeValue(forKey: category)
-        }
-    }
 }
-
-extension GroceryList: CustomStringConvertible {
-    var description: String {
-        return String(describing: contents)
-    }
-}
-
-extension GroceryList: ExpressibleByDictionaryLiteral {
-    init(dictionaryLiteral elements: (Element, [GroceryItem])...) {
-        self.init(elements.map { (key: $0.0, value: $0.1) })
-    }
-}
-
-//extension GroceryList: Collection {
-//    typealias Index = DictionaryIndex<Element, [GroceryItem]>
-//    var startIndex: Index {
-//        return contents.startIndex
-//    }
-//    var endIndex: Index {
-//        return contents.endIndex
-//    }
-//    subscript (position: Index) -> Iterator.Element {
-//        guard indices.contains(position) else { fatalError() }
-//        let dictionaryElement = contents[position]
-//        return (element: dictionaryElement.key, items: dictionaryElement.value)
-//    }
-//    func index(after i: Index) -> Index {
-//        return contents.index(after: i)
-//    }
-//}
-
