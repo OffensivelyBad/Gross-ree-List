@@ -9,7 +9,8 @@
 import UIKit
 
 protocol AddViewDelegate {
-    func addItem(_ item: GroceryItem)
+    func addItem(_ item: GroceryItem, category: String)
+    func modifyItem(_ item: GroceryItem, category: String, newItem: GroceryItem, newCategory: String)
 }
 
 class AddViewController: UIViewController {
@@ -34,9 +35,11 @@ class AddViewController: UIViewController {
         self.picker.dataSource = self
 
         guard let item = groceryItem else {
-            self.categoryTextField.text = GroceryCategory.categories.first ?? ""
+            self.categoryTextField.text = Category.categories.first ?? ""
+            self.addButton.setTitle("Add", for: .normal)
             return
         }
+        self.addButton.setTitle("Save", for: .normal)
         self.nameTextField.text = item.name
         self.categoryTextField.text = item.category
         
@@ -53,8 +56,14 @@ class AddViewController: UIViewController {
             return
         }
         
-        let newItem = GroceryItem(name: self.nameTextField.text ?? "", isChecked: false, sortOrder: -1, category: self.categoryTextField.text ?? "")
-        self.delegate?.addItem(newItem)
+        let newItem = GroceryItem(name: self.nameTextField.text ?? "", isChecked: false, category: self.categoryTextField.text ?? "")
+        
+        if let existingItem = self.groceryItem {
+            self.delegate?.modifyItem(existingItem, category: existingItem.category, newItem: newItem, newCategory: newItem.category)
+        }
+        else {
+            self.delegate?.addItem(newItem, category: newItem.category)
+        }
         self.navigationController?.popViewController(animated: true)
     }
     
@@ -70,8 +79,8 @@ class AddViewController: UIViewController {
 extension AddViewController: UIPickerViewDelegate {
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        guard GroceryCategory.categories.count > row else { fatalError("Selected grocery is out of range") }
-        let selectedGrocery = GroceryCategory.categories[row]
+        guard Category.categories.count > row else { fatalError("Selected grocery is out of range") }
+        let selectedGrocery = Category.categories[row]
         categoryTextField.text = selectedGrocery
     }
     
@@ -83,12 +92,12 @@ extension AddViewController: UIPickerViewDataSource {
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return GroceryCategory.categories.count
+        return Category.categories.count
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        guard GroceryCategory.categories.count > row else { fatalError("Selected grocery is out of range") }
-        return GroceryCategory.categories[row]
+        guard Category.categories.count > row else { fatalError("Selected grocery is out of range") }
+        return Category.categories[row]
     }
     
 }

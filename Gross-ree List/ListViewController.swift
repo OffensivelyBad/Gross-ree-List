@@ -16,10 +16,7 @@ class ListViewController: UIViewController {
     @IBOutlet weak var itemsLabel: UILabel!
     @IBOutlet weak var resetButton: UIButton!
     
-    private var groceryItems = [GroceryItem]()
-    private var checkedItemsCount: Int {
-        return groceryItems.reduce(0) { $0 + ($1.isChecked ? 1 : 0) }
-    }
+    private var groceryList = GroceryList()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,16 +30,18 @@ class ListViewController: UIViewController {
         tableView.allowsSelectionDuringEditing = true
         
         //load test data
-        let item1 = GroceryItem(name: "Cinnamon Toast Crunch", isChecked: false, sortOrder: 0, category: "Breakfast")
-        let item2 = GroceryItem(name: "Ribeye Steak", isChecked: false, sortOrder: 0, category: "Meat")
-        groceryItems.append(contentsOf: [item1, item2])
+        let item1 = GroceryItem(name: "Cinnamon Toast Crunch", isChecked: false, category: "Breakfast")
+        let item2 = GroceryItem(name: "Ribeye Steak", isChecked: false, category: "Meat")
+        groceryList.add(item: item1, to: item1.category)
+        groceryList.add(item: item2, to: item2.category)
         tableView.reloadData()
         
         updateItemsLabel()
     }
     
     private func updateItemsLabel() {
-        let totalCount = groceryItems.count
+        let totalCount = self.groceryList.totalCount
+        let checkedItemsCount = self.groceryList.checkedItemsCount
         itemsLabel.text = "\(checkedItemsCount)/\(totalCount) Items"
     }
     
@@ -74,13 +73,7 @@ class ListViewController: UIViewController {
         let alert = UIAlertController(title: "Are you sure?", message: "Do you want to reset the shopping list and start over?", preferredStyle: .alert)
         let cancel = UIAlertAction(title: "No", style: .cancel, handler: nil)
         let reset = UIAlertAction(title: "Reset", style: .destructive) { (action) in
-            var newItems = [GroceryItem]()
-            for item in self.groceryItems {
-                var newItem = item
-                newItem.isChecked = false
-                newItems.append(newItem)
-            }
-            self.groceryItems = newItems
+            self.groceryList.reset()
             self.tableView.reloadData()
             self.updateItemsLabel()
         }
@@ -94,17 +87,29 @@ class ListViewController: UIViewController {
 extension ListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard indexPath.row < groceryItems.count else { fatalError("Grocery item \(indexPath.row) is out of range: \(groceryItems.count)") }
-        let groceryItem = groceryItems[indexPath.row]
+        guard groceryList.contents.count > indexPath.section && groceryList.contents[indexPath.section].items.count > indexPath.row else { fatalError("Out of index: section: \(indexPath.section), row: \(indexPath.row). GroceryList: \(groceryList)") }
+        let item = groceryList.contents[indexPath.section].items[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.ListCellID, for: indexPath) as UITableViewCell
-        cell.textLabel?.text = groceryItem.name
-        let accessoryType = groceryItem.isChecked ? UITableViewCellAccessoryType.checkmark : .none
+        cell.textLabel?.text = item.name
+        let accessoryType = item.isChecked ? UITableViewCellAccessoryType.checkmark : .none
         cell.accessoryType = accessoryType
         return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return groceryItems.count
+        guard groceryList.contents.count > section else { return 0 }
+        let contents = groceryList.contents[section]
+        return contents.items.count
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return groceryList.contents.count
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        guard groceryList.contents.count > section else { return "" }
+        let title = groceryList.contents[section].name
+        return title
     }
     
 }
@@ -112,67 +117,45 @@ extension ListViewController: UITableViewDataSource {
 extension ListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard indexPath.row < groceryItems.count else { fatalError("Grocery item \(indexPath.row) is out of range: \(groceryItems.count)") }
-        var groceryItem = groceryItems[indexPath.row]
+        self.tableView.deselectRow(at: indexPath, animated: true)
+        guard groceryList.contents.count > indexPath.section && groceryList.contents[indexPath.section].items.count > indexPath.row else { fatalError("Out of index: section: \(indexPath.section), row: \(indexPath.row). GroceryList: \(groceryList)") }
         
-        if self.tableView.isEditing {
+        let category = groceryList.contents[indexPath.section]
+        let item = groceryList.contents[indexPath.section].items[indexPath.row]
+        
+        guard !self.tableView.isEditing else {
             self.tableView.setEditing(false, animated: false)
-            performSegue(withIdentifier: Constants.ListSegueID, sender: groceryItem)
+            performSegue(withIdentifier: Constants.ListSegueID, sender: item)
             return
         }
         
+        var currentCategoryIndex = 0
+        var newCategoryIndex = 0
+        var currentItemIndex = 0
+        var newItemIndex = 0
+        
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
-        cell.setSelected(false, animated: true)
         
-        groceryItem.isChecked = !groceryItem.isChecked
-        let currentRow = indexPath.row
-        var newRow = checkedItemsCount
-        
-        if groceryItem.isChecked {
-            if checkedItemsCount == currentRow {
-                // Row should remain in the same position
-                newRow = currentRow
-            }
-            groceryItem.sortOrder = newRow
-            
-            if currentRow > newRow {
-                self.tableView.performBatchUpdates({
-                    let newIndexPath = IndexPath(row: newRow, section: 0)
-                    groceryItems.remove(at: currentRow)
-                    groceryItems.insert(groceryItem, at: newRow)
-                    self.tableView.moveRow(at: indexPath, to: newIndexPath)
-                }, completion: { (_) in
-                    self.tableView.reloadData()
-                })
-            } else {
-                groceryItems[currentRow] = groceryItem
-                self.tableView.reloadData()
-            }
-            
+        if item.isChecked {
+            cell.accessoryType = .none
+            ((currentCategoryIndex: currentCategoryIndex, newCategoryIndex: newCategoryIndex), (currentItemIndex: currentItemIndex, newItemIndex: newItemIndex)) = groceryList.unCheck(item: item, in: category)
         }
         else {
-            
-            groceryItem.sortOrder = -1
-            newRow = checkedItemsCount - 1
-            
-            if currentRow == newRow {
-                self.groceryItems[currentRow] = groceryItem
-                self.tableView.reloadData()
-            }
-            else {
-                self.tableView.performBatchUpdates({
-                    let newIndexPath = IndexPath(row: newRow, section: 0)
-                    self.tableView.moveRow(at: indexPath, to: newIndexPath)
-                    groceryItems.remove(at: currentRow)
-                    groceryItems.insert(groceryItem, at: newRow)
-                }, completion: { (_) in
-                    self.tableView.reloadData()
-                })
-            }
+            cell.accessoryType = .checkmark
+            ((currentCategoryIndex: currentCategoryIndex, newCategoryIndex: newCategoryIndex), (currentItemIndex: currentItemIndex, newItemIndex: newItemIndex)) = groceryList.checkOff(item: item, in: category)
         }
         
-        self.updateItemsLabel()
+        // Update the table view
+        let fromIndexPath = IndexPath(row: currentItemIndex, section: newCategoryIndex)
+        let toIndexPath = IndexPath(row: newItemIndex, section: newCategoryIndex)
+        self.tableView.performBatchUpdates({
+            self.tableView.moveSection(currentCategoryIndex, toSection: newCategoryIndex)
+        }) { (_) in
+            self.tableView.moveRow(at: fromIndexPath, to: toIndexPath)
+        }
         
+        // Set the totals label
+        self.updateItemsLabel()
     }
         
 
@@ -181,9 +164,23 @@ extension ListViewController: UITableViewDelegate {
 
 extension ListViewController: AddViewDelegate {
     
-    func addItem(_ item: GroceryItem) {
-        self.groceryItems.append(item)
+    func addItem(_ item: GroceryItem, category: String) {
+        self.groceryList.add(item: item, to: category)
         tableView.reloadData()
+        self.updateItemsLabel()
+    }
+    
+    func modifyItem(_ item: GroceryItem, category: String, newItem: GroceryItem, newCategory: String) {
+        var existingCategory = GroceryCategory(name: "", items: [])
+        for cat in self.groceryList.contents {
+            if cat.name == category {
+                existingCategory = cat
+                break
+            }
+        }
+        self.groceryList.remove(item: item, from: existingCategory)
+        self.groceryList.add(item: newItem, to: newCategory)
+        self.tableView.reloadData()
     }
     
 }
