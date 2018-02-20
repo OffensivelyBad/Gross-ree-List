@@ -106,6 +106,12 @@ extension ListViewController: UITableViewDataSource {
         return groceryList.contents.count
     }
     
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        guard groceryList.contents.count > section else { return "" }
+        let title = groceryList.contents[section].name
+        return title
+    }
+    
 }
 
 extension ListViewController: UITableViewDelegate {
@@ -140,10 +146,13 @@ extension ListViewController: UITableViewDelegate {
         }
         
         // Update the table view
-        let fromIndexPath = IndexPath(row: currentItemIndex, section: currentCategoryIndex)
-        let toIndexPath = IndexPath(row: newItemIndex, section: currentCategoryIndex)
-        self.tableView.moveRow(at: fromIndexPath, to: toIndexPath)
-        self.tableView.moveSection(currentCategoryIndex, toSection: newCategoryIndex)
+        let fromIndexPath = IndexPath(row: currentItemIndex, section: newCategoryIndex)
+        let toIndexPath = IndexPath(row: newItemIndex, section: newCategoryIndex)
+        self.tableView.performBatchUpdates({
+            self.tableView.moveSection(currentCategoryIndex, toSection: newCategoryIndex)
+        }) { (_) in
+            self.tableView.moveRow(at: fromIndexPath, to: toIndexPath)
+        }
         
         // Set the totals label
         self.updateItemsLabel()
@@ -158,6 +167,20 @@ extension ListViewController: AddViewDelegate {
     func addItem(_ item: GroceryItem, category: String) {
         self.groceryList.add(item: item, to: category)
         tableView.reloadData()
+        self.updateItemsLabel()
+    }
+    
+    func modifyItem(_ item: GroceryItem, category: String, newItem: GroceryItem, newCategory: String) {
+        var existingCategory = GroceryCategory(name: "", items: [])
+        for cat in self.groceryList.contents {
+            if cat.name == category {
+                existingCategory = cat
+                break
+            }
+        }
+        self.groceryList.remove(item: item, from: existingCategory)
+        self.groceryList.add(item: newItem, to: newCategory)
+        self.tableView.reloadData()
     }
     
 }

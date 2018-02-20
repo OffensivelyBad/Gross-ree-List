@@ -10,6 +10,7 @@ import UIKit
 
 protocol AddViewDelegate {
     func addItem(_ item: GroceryItem, category: String)
+    func modifyItem(_ item: GroceryItem, category: String, newItem: GroceryItem, newCategory: String)
 }
 
 class AddViewController: UIViewController {
@@ -35,8 +36,10 @@ class AddViewController: UIViewController {
 
         guard let item = groceryItem else {
             self.categoryTextField.text = Category.categories.first ?? ""
+            self.addButton.setTitle("Add", for: .normal)
             return
         }
+        self.addButton.setTitle("Save", for: .normal)
         self.nameTextField.text = item.name
         self.categoryTextField.text = item.category
         
@@ -54,7 +57,13 @@ class AddViewController: UIViewController {
         }
         
         let newItem = GroceryItem(name: self.nameTextField.text ?? "", isChecked: false, category: self.categoryTextField.text ?? "")
-        self.delegate?.addItem(newItem, category: newItem.category)
+        
+        if let existingItem = self.groceryItem {
+            self.delegate?.modifyItem(existingItem, category: existingItem.category, newItem: newItem, newCategory: newItem.category)
+        }
+        else {
+            self.delegate?.addItem(newItem, category: newItem.category)
+        }
         self.navigationController?.popViewController(animated: true)
     }
     

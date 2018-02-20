@@ -97,6 +97,7 @@ struct GroceryList {
     
     mutating func reset() {
         var categories = contents
+        categories = []
         for content in contents {
             var newCategory = content
             var newItems = [GroceryItem]()
@@ -118,7 +119,7 @@ struct GroceryList {
                 var newCategory = existingCategory
                 newCategory.add(item: item)
                 contents[index] = newCategory
-                break
+                return
             }
         }
         // The category needs to be added
@@ -213,8 +214,8 @@ struct GroceryList {
         var newCategoryIndex = currentCategoryIndex
         let currentItemIndex = newCategory.index(for: item)
         var newItemIndex = currentItemIndex
-        
-        if newCategory.checkedCount == 0 {
+
+        if newCategory.checkedCount <= 1 {
             if categoriesWithChecksCount > 0 {
                 // Move the category to the categoriesWithCheckCount - 1 index
                 newCategoryIndex = categoriesWithChecksCount - 1
@@ -226,8 +227,13 @@ struct GroceryList {
         }
         // Uncheck the item
         newItem.isChecked = false
-        newCategory.items.insert(newItem, at: newItemIndex)
-        newCategory.items.remove(at: currentCategoryIndex)
+        if newItemIndex == currentItemIndex {
+            newCategory.items[newItemIndex] = newItem
+        }
+        else {
+            newCategory.items.insert(newItem, at: newItemIndex)
+            newCategory.items.remove(at: currentCategoryIndex)
+        }
         
         // Remove the old category and add it to the contents
         contents.remove(at: currentCategoryIndex)
