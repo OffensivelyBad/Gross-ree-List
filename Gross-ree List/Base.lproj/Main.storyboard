@@ -44,7 +44,7 @@
                                         </constraints>
                                         <state key="normal" title="Go"/>
                                         <connections>
-                                            <segue destination="b9h-NA-m53" kind="show" id="nCn-Xt-rfM"/>
+                                            <action selector="signInOrUp" destination="BYZ-38-t0r" eventType="touchUpInside" id="XQT-BC-Aew"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -71,6 +71,11 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <connections>
+                        <outlet property="emailTextField" destination="6kp-Ux-k4r" id="ghe-ZZ-1z8"/>
+                        <outlet property="passwordTextField" destination="vvq-ZE-CSV" id="JsX-p1-izM"/>
+                        <segue destination="b9h-NA-m53" kind="show" identifier="LoginListSegue" id="evk-S3-2La"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>

@@ -8,6 +8,10 @@
 
 import Foundation
 
+enum Segue {
+    static let LoginToListSegue = "LoginListSegue"
+}
+
 enum Constants {
     static let ListCellID = "Cell"
     static let ListSegueID = "listAddSegue"

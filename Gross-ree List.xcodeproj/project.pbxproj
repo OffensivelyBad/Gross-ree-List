@@ -15,9 +15,13 @@
 		29C60ED7201D217700ACFA78 /* ListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C60ED6201D217700ACFA78 /* ListViewController.swift */; };
 		29C60ED9201D218400ACFA78 /* AddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C60ED8201D218400ACFA78 /* AddViewController.swift */; };
 		29C60EDB201D21FE00ACFA78 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C60EDA201D21FE00ACFA78 /* Models.swift */; };
+		29D5BE0A2051BC7B00E84B66 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 29D5BE092051BC7B00E84B66 /* GoogleService-Info.plist */; };
+		29D5BE0C2051C06900E84B66 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29D5BE0B2051C06900E84B66 /* BaseViewController.swift */; };
+		6933511AA287CC7E8F2CC75D /* Pods_Gross_ree_List.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 481C64DD48999C6A517C1B32 /* Pods_Gross_ree_List.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		090C424903B304E5741606D7 /* Pods-Gross-ree List.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Gross-ree List.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Gross-ree List/Pods-Gross-ree List.debug.xcconfig"; sourceTree = "<group>"; };
 		29C60EC1201D1D4500ACFA78 /* Gross-ree List.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Gross-ree List.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		29C60EC4201D1D4500ACFA78 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		29C60EC6201D1D4500ACFA78 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -28,6 +32,10 @@
 		29C60ED6201D217700ACFA78 /* ListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewController.swift; sourceTree = "<group>"; };
 		29C60ED8201D218400ACFA78 /* AddViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddViewController.swift; sourceTree = "<group>"; };
 		29C60EDA201D21FE00ACFA78 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		29D5BE092051BC7B00E84B66 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		29D5BE0B2051C06900E84B66 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
+		481C64DD48999C6A517C1B32 /* Pods_Gross_ree_List.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Gross_ree_List.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		55FD784092624AA54C13DADD /* Pods-Gross-ree List.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Gross-ree List.release.xcconfig"; path = "Pods/Target Support Files/Pods-Gross-ree List/Pods-Gross-ree List.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6933511AA287CC7E8F2CC75D /* Pods_Gross_ree_List.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -46,6 +55,8 @@
 			children = (
 				29C60EC3201D1D4500ACFA78 /* Gross-ree List */,
 				29C60EC2201D1D4500ACFA78 /* Products */,
+				86A932F6B4722CCDE610DC37 /* Pods */,
+				9A3F78F07A86F133A6B507A9 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -69,8 +80,27 @@
 				29C60ECD201D1D4600ACFA78 /* LaunchScreen.storyboard */,
 				29C60ED0201D1D4600ACFA78 /* Info.plist */,
 				29C60EDA201D21FE00ACFA78 /* Models.swift */,
+				29D5BE092051BC7B00E84B66 /* GoogleService-Info.plist */,
+				29D5BE0B2051C06900E84B66 /* BaseViewController.swift */,
 			);
 			path = "Gross-ree List";
+			sourceTree = "<group>";
+		};
+		86A932F6B4722CCDE610DC37 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				090C424903B304E5741606D7 /* Pods-Gross-ree List.debug.xcconfig */,
+				55FD784092624AA54C13DADD /* Pods-Gross-ree List.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		9A3F78F07A86F133A6B507A9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				481C64DD48999C6A517C1B32 /* Pods_Gross_ree_List.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -80,9 +110,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 29C60ED3201D1D4600ACFA78 /* Build configuration list for PBXNativeTarget "Gross-ree List" */;
 			buildPhases = (
+				BDB0C8395AB87AA062820DC8 /* [CP] Check Pods Manifest.lock */,
 				29C60EBD201D1D4500ACFA78 /* Sources */,
 				29C60EBE201D1D4500ACFA78 /* Frameworks */,
 				29C60EBF201D1D4500ACFA78 /* Resources */,
+				FF9DB4C8BB211855149FB4CD /* [CP] Embed Pods Frameworks */,
+				6D4EEA285804C161B5F84A18 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -133,12 +166,71 @@
 			buildActionMask = 2147483647;
 			files = (
 				29C60ECF201D1D4600ACFA78 /* LaunchScreen.storyboard in Resources */,
+				29D5BE0A2051BC7B00E84B66 /* GoogleService-Info.plist in Resources */,
 				29C60ECC201D1D4600ACFA78 /* Assets.xcassets in Resources */,
 				29C60ECA201D1D4600ACFA78 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		6D4EEA285804C161B5F84A18 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Gross-ree List/Pods-Gross-ree List-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		BDB0C8395AB87AA062820DC8 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Gross-ree List-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FF9DB4C8BB211855149FB4CD /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Gross-ree List/Pods-Gross-ree List-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Gross-ree List/Pods-Gross-ree List-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		29C60EBD201D1D4500ACFA78 /* Sources */ = {
@@ -150,6 +242,7 @@
 				29C60ED9201D218400ACFA78 /* AddViewController.swift in Sources */,
 				29C60ED7201D217700ACFA78 /* ListViewController.swift in Sources */,
 				29C60EDB201D21FE00ACFA78 /* Models.swift in Sources */,
+				29D5BE0C2051C06900E84B66 /* BaseViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -284,6 +377,7 @@
 		};
 		29C60ED4201D1D4600ACFA78 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 090C424903B304E5741606D7 /* Pods-Gross-ree List.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -299,6 +393,7 @@
 		};
 		29C60ED5201D1D4600ACFA78 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 55FD784092624AA54C13DADD /* Pods-Gross-ree List.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
